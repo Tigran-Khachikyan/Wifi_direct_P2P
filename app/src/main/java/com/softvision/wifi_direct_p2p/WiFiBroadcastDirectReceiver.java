@@ -3,6 +3,7 @@ package com.softvision.wifi_direct_p2p;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.widget.Toast;
 
@@ -39,7 +40,16 @@ public class WiFiBroadcastDirectReceiver extends BroadcastReceiver {
                     if (wifiP2pManager != null)
                         wifiP2pManager.requestPeers(channel, activity.peerListListener);
                     break;
+
+
                 case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION:
+                    if(wifiP2pManager!=null){
+                        NetworkInfo networkInfo = intent.getParcelableExtra(wifiP2pManager.EXTRA_NETWORK_INFO);
+                        if(networkInfo.isConnected())
+                            wifiP2pManager.requestConnectionInfo(channel,activity.connectionInfoListener);
+                        else
+                            activity.tv_connection_status.setText("Disconnected.");
+                    }
                     break;
                 case WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION:
                     break;

@@ -31,7 +31,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private AppCompatButton btn_wifi_status, btn_discover, btn_send;
-    private AppCompatTextView tv_message, tv_connection_status;
+    AppCompatTextView tv_message, tv_connection_status;
     private RecyclerView recyclerView;
     private AppCompatEditText et_write_message;
     private WifiManager wifiManager;
@@ -209,6 +209,10 @@ public class MainActivity extends AppCompatActivity {
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
+            if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner)
+                tv_connection_status.setText("Host");
+            else if(wifiP2pInfo.groupFormed)
+                tv_connection_status.setText("Client");
 
         }
     };

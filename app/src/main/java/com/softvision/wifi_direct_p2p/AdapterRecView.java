@@ -14,12 +14,14 @@ import java.util.List;
 public class AdapterRecView extends RecyclerView.Adapter<AdapterRecView.Holder> {
 
     private List<WifiP2pDevice> devices;
+    private OnHolderClickListener holderClickListener;
 
-    public AdapterRecView(List<WifiP2pDevice> _devices) {
+    AdapterRecView(List<WifiP2pDevice> _devices, OnHolderClickListener onHolderClickListener) {
         devices = _devices;
+        holderClickListener = onHolderClickListener;
     }
 
-    public void setDeviceNames(List<WifiP2pDevice> _devices) {
+    void setDeviceNames(List<WifiP2pDevice> _devices) {
         devices = _devices;
         notifyDataSetChanged();
     }
@@ -29,9 +31,15 @@ public class AdapterRecView extends RecyclerView.Adapter<AdapterRecView.Holder> 
         private AppCompatTextView number = itemView.findViewById(R.id.tv_number);
         private AppCompatTextView device_name = itemView.findViewById(R.id.tv_device_name);
 
-        void bind(WifiP2pDevice device, int pos) {
+        void bind(final WifiP2pDevice device, int pos) {
             number.setText(String.valueOf(pos + 1));
             device_name.setText(device.deviceName);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    holderClickListener.onClick(device);
+                }
+            });
         }
 
         Holder(@NonNull View itemView) {

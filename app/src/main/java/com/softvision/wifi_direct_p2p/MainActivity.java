@@ -14,8 +14,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -87,7 +89,25 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
 
         recyclerView = findViewById(R.id.recycler_connections);
-        adapterRecView = new AdapterRecView(new ArrayList<WifiP2pDevice>());
+        adapterRecView = new AdapterRecView(new ArrayList<WifiP2pDevice>(), new OnHolderClickListener() {
+            @Override
+            public void onClick(final WifiP2pDevice device) {
+                WifiP2pConfig config = new WifiP2pConfig();
+                config.deviceAddress = device.deviceAddress;
+
+                wifiP2pManager.connect(channel, config, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(MainActivity.this, "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(int i) {
+                        Toast.makeText(MainActivity.this, "Not connected", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapterRecView);
     }
@@ -185,6 +205,14 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "NO DEVICE FOUND", Toast.LENGTH_SHORT).show();
         }
     };
+
+    WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+        @Override
+        public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
+
+        }
+    };
+
 
     private void checkPermissions() {
 
